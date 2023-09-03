@@ -1,54 +1,71 @@
 package com.example.demo.config;
 
-import com.example.demo.auth.PrincipalOauth2UserService;
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.service.OAuth2MemberService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-@Configuration
+// 스프링 시큐리티 설정 클래스
+@EnableMethodSecurity
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private PrincipalOauth2UserService principalOauth2UserService;
+@RequiredArgsConstructor
+@Configuration
+public class SecurityConfig {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    private final ObjectMapper objectMapper;
 
-        http.authorizeRequests()
-                .antMatchers("/user/**").authenticated()
-                .antMatchers("/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+
+
+
+
+
+    private final OAuth2MemberService oAuth2MemberService;
+
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .httpBasic().disable()
+                .csrf().disable()
+                .cors().and()
+                .authorizeRequests()
+                .requestMatchers(new AntPathRequestMatcher("/private/**")).authenticated()
+                .requestMatchers(new AntPathRequestMatcher("/admin/**")).access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
                 .and()
+                .headers((headers) -> headers.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))) // 추가된 부분
                 .formLogin()
-                .loginPage("/loginForm")        // 인증이 필요한 URL에 접근하면 /loginForm으로 이동
-                .usernameParameter("id")        // 로그인 시 form에서 가져올 값(id, email 등이 해당)
-                .passwordParameter("pw")        // 로그인 시 form에서 가져올 값
-                .loginProcessingUrl("/login")        // 로그인을 처리할 URL 입력
-                .defaultSuccessUrl("/")            // 로그인 성공하면 "/" 으로 이동
-                .failureUrl("/loginForm")        //로그인 실패 시 /loginForm으로 이동
+                .loginPage("/user/login")
+                .loginProcessingUrl("/user/login")
+                .defaultSuccessUrl("/success")
+                .failureUrl("/user/login")
                 .and()
-                .logout()                    // logout할 경우
-                .logoutUrl("/logout")            // 로그아웃을 처리할 URL 입력
-                .logoutSuccessUrl("/")    // 로그아웃 성공 시 "/"으로 이동
-                .and()                    //추가
-                .oauth2Login()                // OAuth2기반의 로그인인 경우
-                .loginPage("/loginForm")        // 인증이 필요한 URL에 접근하면 /loginForm으로 이동
-                .defaultSuccessUrl("/")            // 로그인 성공하면 "/" 으로 이동
-                .failureUrl("/loginForm")        // 로그인 실패 시 /loginForm으로 이동
-                .userInfoEndpoint()            // 로그인 성공 후 사용자정보를 가져온다
-                .userService(principalOauth2UserService);    //사용자정보를 처리할 때 사용한다
-
+                .logout()
+                .logoutUrl("/user/logout")
+                .logoutSuccessUrl("/success")
+                .and()
+                .oauth2Login()
+                .loginPage("/login_form")
+                .defaultSuccessUrl("/success")
+                .userInfoEndpoint()
+                .userService(oAuth2MemberService).and().and().build();
     }
 
 
-
-
 }
-

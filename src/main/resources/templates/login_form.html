@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+
+  body {
+     background: linear-gradient(120deg, #FFD700 0%, #FFFFE0 100%);
+
+      font-family: 'Roboto', sans-serif;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      overflow: auto;
+  }
+
+  .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+  }
+
+  .login-card {
+      max-width: 600px;
+      width: 100%;
+      padding: 30px 40px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin: 0 20px;
+      animation: slideUp 0.5s forwards;
+  }
+
+  .login-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .login-card-header {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 25px;
+    color: #fff;
+    font-weight: 600;
+    background: #8B4513;
+    padding: 15px 20px;
+    border-radius: 25px;
+    font-family: 'Poppins', sans-serif;
+    width: 300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 10px;
+    border: 3px solid #d2b48c;
+
+    /* 추가된 부분: 입체감을 위한 그림자 */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+
+  }
+
+  .login-card-header:hover {
+    /* 추가된 부분: 호버 시에 로테이션 및 크기 변화, 색상 변화 효과를 줍니다 */
+    animation: shakeHover 0.5s ease-in-out, rotateBack 0.5s ease-in-out 0.5s;
+    background: #6B3711;
+    color: #ffcc00;
+  }
+   .login-card-header:hover {
+    /* 추가된 부분: 호버 시에 로테이션 및 크기 변화, 색상 변화 효과를 줍니다 */
+    animation: shakeHover 1s ease-in-out, rotateBack 0.5s ease-in-out 1s;
+    background: #6B3711;
+    color: #ffcc00;
+  }
+
+  /* 추가된 부분: 호버 시에 느리게 흔들리는 애니메이션 */
+  @keyframes shakeHover {
+    0%, 100% {
+      transform: rotate(0deg);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: rotate(-2deg);
+    }
+    20%, 40%, 60%, 80% {
+      transform: rotate(2deg);
+    }
+  }
+
+  /* 추가된 부분: 호버 후에 다시 0도로 돌아오는 애니메이션 */
+  @keyframes rotateBack {
+    0% {
+      transform: rotate(2deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
+
+   .login-form-group {
+    margin-bottom: 25px;
+    text-align: center; /* 텍스트 가운데 정렬 추가 */
+  }
+
+  .login-form-label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #555;
+    font-weight: 1000;
+    text-align: center; /* 텍스트 가운데 정렬 추가 */
+  }
+
+  .login-input {
+    width: 100%;
+    padding: 15px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    text-align: center;
+
+    /* 수정된 부분: 백그라운드 컬러 연한 갈색으로 변경 */
+    background-color: #d4b996; /* 연한 갈색 색상 코드 */
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 3px solid #d2b48c;
+    font-weight: 1000;
+     font-family: 'Poppins', sans-serif; /* 고급스러운 폰트 적용 */
+  }
+
+  .login-input:focus {
+    background-color: #cba679; /* 포커스 시 미세하게 색상 변경 */
+    outline: none;
+  }
+
+  /* 로그인 버튼 스타일링 */
+.login-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #8b7355; /* 고급스러운 갈색 배경 */
+    color: white;
+    font-weight:800;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.login-button:hover {
+    background-color: #6b5b45; /* 더 어두운 갈색으로 변경 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+  .login-links {
+      text-align: center;
+      margin-top: 30px;
+      font-weight:800
+  }
+
+  .login-links a {
+      color: #222222;
+      font-size: 15px;
+      font-weight:800
+  }
+
+  .login-links a:hover {
+      color: #dddddd;
+      font-weight:800;
+      text-decoration: none;
+  }
+
+  .social-login {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+  }
+  .social-login a:first-child {
+    margin-left: auto; /* 오른쪽 마진을 auto로 설정하여 왼쪽으로 붙입니다 */
+}
+.social-login a:last-child {
+    margin-right: auto; /* 오른쪽 마진을 auto로 설정하여 왼쪽으로 붙입니다 */
+}
+
+@media (max-width: 768px) { /* 스마트폰 사이즈 */
+    .social-login {
+        display: flex;
+        flex-direction: column; /* 소셜 로그인 버튼을 세로로 정렬합니다 */
+        gap: 20px; /* 버튼 사이의 간격을 조절합니다 */
+    }
+
+    /* 카카오 아이콘 스타일링 */
+    .social-login a:first-child {
+        margin-left: auto; /* 오른쪽 마진을 auto로 설정하여 오른쪽으로 붙입니다 */
+        margin-right: auto; /* 왼쪽 마진을 auto로 설정하여 왼쪽으로 붙입니다 */
+    }
+
+    /* 네이버 아이콘 스타일링 */
+    .social-login a:last-child {
+        margin-left: auto; /* 오른쪽 마진을 auto로 설정하여 오른쪽으로 붙입니다 */
+        margin-right: auto; /* 왼쪽 마진을 auto로 설정하여 왼쪽으로 붙입니다 */
+    }
+}
+
+  .social-login a {
+      flex: 1;
+      margin: 0 10px;
+  }
+
+  .social-login img {
+      max-width: 100%;
+  }
+
+  .social-login a:hover img {
+      opacity: 0.8;
+      transition: opacity 0.3s;
+  }
+
+  @keyframes slideUp {
+      from {
+          transform: translateY(50px);
+          opacity: 0;
+      }
+      to {
+          transform: translateY(0);
+          opacity: 1;
+      }
+  }
+
+
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        document.body.style.opacity = 1;
+    });
+
+    function redirectToNoticeListWithFade() {
+        document.body.style.opacity = 0; // Apply fade-out effect
+        setTimeout(function() {
+            window.location.href = "/"; // Redirect after fade-out
+        }, 500); // Redirect after 500ms delay for fade-out effect
+    }
+    </script>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-card-header" onclick="redirectToNoticeListWithFade()"><img th:src="@{/images/Logo.png}" style="height:60px; width:50%; padding: 10px" alt="Logo"/></div>
+        <form th:action="@{/user/login}" method="post">
+            <div class="login-form-group">
+                <label class="login-form-label" for="username">이름</label>
+                <input type="text" class="login-input" id="username" name="username" placeholder="사용자명을 입력하세요">
+            </div>
+            <div class="login-form-group">
+                <label class="login-form-label" for="password">패스워드</label>
+                <input type="password" class="login-input" id="password" name="password" placeholder="비밀번호를 입력하세요">
+            </div>
+            <button type="submit" class="login-button">로그인</button>
+
+            <!-- 소셜 로그인 버튼 -->
+            <div class="social-login">
+                <a href="/oauth2/authorization/kakao">
+                    <img th:src="@{/images/kakaologin.png}" style="height:55px; width:100%" alt="Kakao Login"/>
+                </a>
+                <a href="/oauth2/authorization/naver">
+                    <img th:src="@{/images/naverlogin.png}" style="height:55px; width:100%" alt="Naver Login"/>
+                </a>
+                <a href="/oauth2/authorization/google">
+                    <img th:src="@{/images/googlelogin.png}" style="height:55px; width:100%" alt="Google Login"/>
+                </a>
+
+            </div>
+        </form>
+
+        <!-- 회원가입 링크 -->
+        <div class="login-links">
+            아직 계정이 없으신가요? <a href="/user/signup" class="signup-link">회원가입</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
